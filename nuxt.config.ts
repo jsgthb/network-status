@@ -6,4 +6,9 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@vueuse/nuxt'
   ],
+  nitro: {
+    experimental: {
+      websocket: true
+    }
+  }
 })
