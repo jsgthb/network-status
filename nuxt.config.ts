@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@pinia/nuxt'
   ],
+  css: ['~/assets/css/main.css'],
   nitro: {
     experimental: {
       websocket: true
