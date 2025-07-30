@@ -382,9 +382,9 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
 
     return {
         // State
-        capabilities: readonly(capabilities),
-        zones: readonly(zones),
-        servers: readonly(servers),
+        capabilities,
+        zones,
+        servers,
 
         // Lists
         capabilitiesList,
