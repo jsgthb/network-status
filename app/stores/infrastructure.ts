@@ -263,6 +263,10 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
         const ids = serversByStatus.value.get("Compromised") || new Set()
         return Array.from(ids).map(id => servers.value.get(id)!).filter(Boolean)
     })
+    const unknownServers = computed(() => {
+        const ids = serversByStatus.value.get("Unknown") || new Set()
+        return Array.from(ids).map(id => servers.value.get(id)!).filter(Boolean)
+    })
     const getZoneHealth = (zoneId: string): string => {
         // Check cache
         if (zoneHealthCache.value.has(zoneId)) {
@@ -362,6 +366,7 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
         compromisedCapabilities,
         healthyServers,
         compromisedServers,
+        unknownServers,
 
         // Health calculation
         getZoneHealth,

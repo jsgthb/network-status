@@ -164,12 +164,23 @@
           <h2 class="text-xl font-semibold">Servers</h2>
           <div class="flex gap-2">
             <UBadge 
-              color="success" variant="subtle" size="lg"
+              color="success" 
+              variant="subtle" 
+              size="lg"
             >
               Healthy: {{ store.healthyServers.length }}
             </UBadge>
             <UBadge 
-              color="error" variant="subtle" size="lg"
+              color="warning" 
+              variant="subtle" 
+              size="lg"
+            >
+              Unknown: {{ store.unknownServers.length }}
+            </UBadge>
+            <UBadge 
+              color="error" 
+              variant="subtle" 
+              size="lg"
             >
               Compromised: {{ store.compromisedServers.length }}
             </UBadge>
