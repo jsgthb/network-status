@@ -31,7 +31,32 @@
     <!-- Capabilities -->
     <UCard>
       <template #header>
-        <h2 class="text-xl font-semibold">Capabilities</h2>
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">Capabilities</h2>
+          <div class="flex gap-2">
+            <UBadge 
+              color="success" 
+              variant="subtle" 
+              size="lg"
+            >
+              Healthy: {{ store.healthyCapabilities.length }}
+            </UBadge>
+            <UBadge 
+              color="warning" 
+              variant="subtle" 
+              size="lg"
+            >
+              Unknown: {{ store.unknownCapabilities.length }}
+            </UBadge>
+            <UBadge 
+              color="error" 
+              variant="subtle" 
+              size="lg"
+            >
+              Compromised: {{ store.compromisedCapabilities.length }}
+            </UBadge>
+          </div>
+        </div>
       </template>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">

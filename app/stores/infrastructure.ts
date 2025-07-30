@@ -255,6 +255,10 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
         const ids = capabilitiesByStatus.value.get("Compromised") || new Set()
         return Array.from(ids).map(id => capabilities.value.get(id)!).filter(Boolean)
     })
+    const unknownCapabilities = computed(() => {
+        const ids = capabilitiesByStatus.value.get("Unknown") || new Set()
+        return Array.from(ids).map(id => capabilities.value.get(id)!).filter(Boolean)
+    })
     const healthyServers = computed(() => {
         const ids = serversByStatus.value.get("Healthy") || new Set()
         return Array.from(ids).map(id => servers.value.get(id)!).filter(Boolean)
@@ -364,6 +368,7 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
         // Status filters
         healthyCapabilities,
         compromisedCapabilities,
+        unknownCapabilities,
         healthyServers,
         compromisedServers,
         unknownServers,
