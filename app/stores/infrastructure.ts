@@ -30,6 +30,8 @@ export interface StatusUpdate {
 }
 
 export const useInfrastructureStore = defineStore("infrastructure", () => {
+    const websocketSender = ref<((message: any) => void) | null>(null)
+
     // State
     const capabilities = ref<Map<string, Capability>>(new Map)
     const zones = ref<Map<string, Zone>>(new Map)
@@ -81,6 +83,20 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
         // Capability indexes
         for (const capability of capabilities.value.values()) {
             addToIndex(capabilitiesByStatus.value, capability.status, capability.id)
+        }
+    }
+
+    // Websocket functions
+    const setWebSocketSender = (sender: (message: any) => void) => {
+        websocketSender.value = sender
+    }
+
+    const broadcastStatusUpdate = (update: StatusUpdate) => {
+        if (websocketSender.value) {
+            websocketSender.value({
+                type: "status_update",
+                payload: update
+            })
         }
     }
 
@@ -300,8 +316,8 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
         return health
     }
 
-    // Actions
-    const updateCapabilityStatus = (update: StatusUpdate) => {
+    // Internal actions
+    const updateCapabilityStatusInternal = (update: StatusUpdate) => {
         if (update.type !== "Capability") return
 
         const capability = capabilities.value.get(update.id)
@@ -319,7 +335,7 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
         removeFromIndex(capabilitiesByStatus.value, oldStatus, update.id)
         addToIndex(capabilitiesByStatus.value, update.status, update.id)
     }
-    const updateServerStatus = (update: StatusUpdate) => {
+    const updateServerStatusInternal = (update: StatusUpdate) => {
         if (update.type !== "Server") return
 
         const server = servers.value.get(update.id)
@@ -339,6 +355,26 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
 
         // Invalidate zone health cache for affected zone
         zoneHealthCache.value.delete(server.zoneId)
+    }
+
+    // Public actions using websocket
+    // TODO make internal update more robust depending on websocket success / failure
+    const updateCapabilityStatus = (update: StatusUpdate) => {
+        updateCapabilityStatusInternal(update)
+        broadcastStatusUpdate(update)
+    }
+    const updateServerStatus = (update: StatusUpdate) => {
+        updateServerStatusInternal(update)
+        broadcastStatusUpdate(update)
+    }
+    const handleIncomingStatusUpdate = (update: StatusUpdate) => {
+        console.log("Received status update from websocket:", update)
+
+        if (update.type === "Capability") {
+            updateCapabilityStatusInternal(update)
+        } else if (update.type === "Server") {
+            updateServerStatusInternal(update)
+        }
     }
 
     // Initialize data on store creation
@@ -375,6 +411,10 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
 
         // Health calculation
         getZoneHealth,
+
+        // Websocket
+        setWebSocketSender,
+        handleIncomingStatusUpdate,
 
         // Actions
         updateCapabilityStatus,

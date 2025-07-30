@@ -5,15 +5,11 @@
 </template>
 
 <script setup>
-const { connect, close, sendMessage } = useWebSocketConnection()
+const { connect, close, initializeStoreIntegration } = useWebSocketConnection()
 
 onMounted(() => {
   connect()
-
-  // Test websocket
-  setTimeout(() => {
-    sendMessage({ type: "ping", data: "test ping" })
-  }, 2000)
+  initializeStoreIntegration()
 })
 
 onUnmounted(() => {

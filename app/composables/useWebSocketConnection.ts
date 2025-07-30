@@ -16,9 +16,21 @@ export const useWebSocketConnection = () => {
         onMessage: (ws, event) => {
             try {
                 const parsedData = JSON.parse(event.data)
-                console.log("Received message:", parsedData)
+                console.log("Received websocket message:", parsedData)
+
+                if (!parsedData.payload) return
+                switch (parsedData.type) {
+                    case "status_update": {
+                        const store = useInfrastructureStore()
+                        store.handleIncomingStatusUpdate(parsedData.payload)
+                        break;
+                    }
+                    default: {
+                        break;
+                    }
+                }
             } catch (error) {
-                console.log("Raw message:", event.data)
+                console.log("Raw message (not JSON):", event.data)
             }
         }
     })
@@ -38,10 +50,16 @@ export const useWebSocketConnection = () => {
         open()
     }
 
+    const initializeStoreIntegration = () => {
+        const store = useInfrastructureStore()
+        store.setWebSocketSender(sendMessage)
+    }
+
     return {
         status,
         connect,
         close,
-        sendMessage
+        sendMessage,
+        initializeStoreIntegration
     }
 }
