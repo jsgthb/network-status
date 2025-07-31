@@ -17,6 +17,9 @@ export interface Server {
     status: "Healthy" | "Compromised" | "Unknown"
     zoneId: string
     lastUpdated: Date
+    description: {
+        os: string
+    }
 }
 
 export interface StatusUpdate {

@@ -71,14 +71,20 @@ class InfrastructureStore {
                 name: "Web Server 01",
                 status: "Healthy",
                 zoneId: "zone-us-east",
-                lastUpdated: new Date()
+                lastUpdated: new Date(),
+                description: {
+                    os: "Debian 12"
+                }
             },
             {
                 id: "server-use-web-02",
                 name: "Web Server 02",
                 status: "Healthy",
                 zoneId: "zone-us-east",
-                lastUpdated: new Date()
+                lastUpdated: new Date(),
+                description: {
+                    os: "Debian 12"
+                }
             },
             // US West Zone (Web Services Capability)
             {
@@ -86,14 +92,20 @@ class InfrastructureStore {
                 name: "Web Server 01",
                 status: "Healthy",
                 zoneId: "zone-us-west",
-                lastUpdated: new Date()
+                lastUpdated: new Date(),
+                description: {
+                    os: "Windows Server 2025"
+                }
             },
             {
                 id: "server-usw-web-02",
                 name: "Web Server 02",
                 status: "Healthy",
                 zoneId: "zone-us-west",
-                lastUpdated: new Date()
+                lastUpdated: new Date(),
+                description: {
+                    os: "Windows Server 2025"
+                }
             },
             // EU Central Zone (Data Storage Capability)
             {
@@ -101,14 +113,20 @@ class InfrastructureStore {
                 name: "Database Server 01",
                 status: "Healthy",
                 zoneId: "zone-eu-central",
-                lastUpdated: new Date()
+                lastUpdated: new Date(),
+                description: {
+                    os: "FreeBSD 14.1"
+                }
             },
             {
                 id: "server-eu-cache-01",
                 name: "Cache Server 01",
                 status: "Healthy",
                 zoneId: "zone-eu-central",
-                lastUpdated: new Date()
+                lastUpdated: new Date(),
+                description: {
+                    os: "CentOS Stream 9"
+                }
             },
             // Asia Pacific Zone (API Gateway Capability)
             {
@@ -116,14 +134,20 @@ class InfrastructureStore {
                 name: "API Server 01",
                 status: "Healthy",
                 zoneId: "zone-asia-pacific",
-                lastUpdated: new Date()
+                lastUpdated: new Date(),
+                description: {
+                    os: "RHEL 10"
+                }
             },
             {
                 id: "server-ap-lb-01",
                 name: "Load Balancer 01",
                 status: "Healthy",
                 zoneId: "zone-asia-pacific",
-                lastUpdated: new Date()
+                lastUpdated: new Date(),
+                description: {
+                    os: "Arch Linux 2025.07.01"
+                }
             }
         ]
 
