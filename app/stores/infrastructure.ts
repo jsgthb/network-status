@@ -4,7 +4,8 @@ import type {
     Capability,
     Server,
     StatusUpdate,
-    CapabilityZoneRelation
+    CapabilityZoneRelation,
+    InfrastructureState
 } from "~/types/infrastructureTypes"
 
 export const useInfrastructureStore = defineStore("infrastructure", () => {
@@ -15,6 +16,10 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
     const zones = ref<Map<string, Zone>>(new Map)
     const servers = ref<Map<string, Server>>(new Map)
     const capabilityZoneRelations = ref<Set<string>>(new Set)
+
+    // Connection to server store
+    const isLoading = ref(true)
+    const isConnected = ref(false)
 
     // Lookup tables
     const serversByZone = ref<Map<string, Set<string>>>(new Map())
@@ -59,7 +64,6 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
         removeFromIndex(capabilitiesByZone.value, zoneId, capabilityId)
     }
 
-
     const rebuildIndexes = () => {
         serversByZone.value.clear()
         zonesByCapability.value.clear()
@@ -87,9 +91,53 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
         }
     }
 
+    // Initialize state from server data
+    const initializeFromServerState = (serverState: InfrastructureState) => {
+        console.log("Initializing client state from server")
+
+        capabilities.value.clear()
+        zones.value.clear()
+        servers.value.clear()
+        capabilityZoneRelations.value.clear()
+
+        // Convert date string and populate state 
+        serverState.capabilities.forEach(capability => {
+            capabilities.value.set(capability.id, {
+                ...capability,
+                lastUpdated: new Date(capability.lastUpdated)
+            })
+        })
+        serverState.zones.forEach(zone => {
+            zones.value.set(zone.id, {
+                ...zone,
+                lastUpdated: new Date(zone.lastUpdated)
+            })
+        })
+        serverState.servers.forEach(server => {
+            servers.value.set(server.id, {
+                ...server,
+                lastUpdated: new Date(server.lastUpdated)
+            })
+        })
+        serverState.capabilityZoneRelations.forEach(relation => {
+            addCapabilityZoneRelation(relation.capabilityId, relation.zoneId)
+        })
+
+        rebuildIndexes()
+        isLoading.value = false
+        console.log("Client state successfully initialized!")
+    }
+
     // Websocket functions
     const setWebSocketSender = (sender: (message: any) => void) => {
         websocketSender.value = sender
+    }
+
+    const setConnectionStatus = (connected: boolean) => {
+        isConnected.value = connected
+        if (!connected) {
+            isLoading.value = true
+        }
     }
 
     const broadcastStatusUpdate = (update: StatusUpdate) => {
@@ -99,150 +147,6 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
                 payload: update
             })
         }
-    }
-
-    // TODO Load data through YAML
-    const initializePlaceholderData = () => {
-        // Capabilities
-        const placeholderCapabilities: Capability[] = [
-            {
-                id: "cap-web-services",
-                name: "Web Services",
-                status: "Healthy",
-                lastUpdated: new Date()
-            },
-            {
-                id: "cap-data-storage",
-                name: "Data Storage",
-                status: "Compromised",
-                lastUpdated: new Date()
-            },
-            {
-                id: "cap-api-gateway",
-                name: "API Gateway",
-                status: "Healthy",
-                lastUpdated: new Date()
-            }
-        ]
-
-        // Zones
-        const placeholderZones: Zone[] = [
-            {
-                id: "zone-us-east",
-                name: "US East",
-                lastUpdated: new Date()
-            },
-            {
-                id: "zone-us-west",
-                name: "US West",
-                lastUpdated: new Date()
-            },
-            {
-                id: "zone-eu-central",
-                name: "EU Central",
-                lastUpdated: new Date()
-            },
-            {
-                id: "zone-asia-pacific",
-                name: "Asia Pacific",
-                lastUpdated: new Date()
-            }
-        ]
-
-        // Servers
-        const placeholderServers: Server[] = [
-            // US East Zone (Web Services Capability)
-            {
-                id: "server-use-web-01",
-                name: "Web Server 01",
-                status: "Healthy",
-                zoneId: "zone-us-east",
-                lastUpdated: new Date()
-            },
-            {
-                id: "server-use-web-02",
-                name: "Web Server 02",
-                status: "Healthy",
-                zoneId: "zone-us-east",
-                lastUpdated: new Date()
-            },
-            // US West Zone (Web Services Capability)
-            {
-                id: "server-usw-web-01",
-                name: "Web Server 01",
-                status: "Healthy",
-                zoneId: "zone-us-west",
-                lastUpdated: new Date()
-            },
-            {
-                id: "server-usw-web-02",
-                name: "Web Server 02",
-                status: "Healthy",
-                zoneId: "zone-us-west",
-                lastUpdated: new Date()
-            },
-            // EU Central Zone (Data Storage Capability)
-            {
-                id: "server-eu-db-01",
-                name: "Database Server 01",
-                status: "Healthy",
-                zoneId: "zone-eu-central",
-                lastUpdated: new Date()
-            },
-            {
-                id: "server-eu-cache-01",
-                name: "Cache Server 01",
-                status: "Healthy",
-                zoneId: "zone-eu-central",
-                lastUpdated: new Date()
-            },
-            // Asia Pacific Zone (API Gateway Capability)
-            {
-                id: "server-ap-api-01",
-                name: "API Server 01",
-                status: "Healthy",
-                zoneId: "zone-asia-pacific",
-                lastUpdated: new Date()
-            },
-            {
-                id: "server-ap-lb-01",
-                name: "Load Balancer 01",
-                status: "Healthy",
-                zoneId: "zone-asia-pacific",
-                lastUpdated: new Date()
-            }
-        ]
-
-        // Capability zone relationships
-        const placeholderRelations: CapabilityZoneRelation[] = [
-            // Web services
-            { capabilityId: "cap-web-services", zoneId: "zone-us-east"},
-            { capabilityId: "cap-web-services", zoneId: "zone-us-west"},
-            // Data storage
-            { capabilityId: "cap-data-storage", zoneId: "zone-us-east"},
-            { capabilityId: "cap-data-storage", zoneId: "zone-us-west"},
-            { capabilityId: "cap-data-storage", zoneId: "zone-eu-central"},
-            // API gateway
-            { capabilityId: "cap-api-gateway", zoneId: "zone-asia-pacific"},
-        ]
-
-        // Populate state
-        capabilities.value.clear()
-        placeholderCapabilities.forEach(capability => capabilities.value.set(capability.id, capability))
-        
-        zones.value.clear()
-        placeholderZones.forEach(zone => zones.value.set(zone.id, zone))
-
-        servers.value.clear()
-        placeholderServers.forEach(server => servers.value.set(server.id, server))
-        
-        capabilityZoneRelations.value.clear()
-        placeholderRelations.forEach(relation => {
-            addCapabilityZoneRelation(relation.capabilityId, relation.zoneId)
-        })
-        
-        // Rebuild lookup table indexes with state
-        rebuildIndexes()
     }
 
     // Basic getters
@@ -396,14 +300,13 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
         }
     }
 
-    // Initialize data on store creation
-    initializePlaceholderData()
-
     return {
         // State
         capabilities,
         zones,
         servers,
+        isLoading,
+        isConnected,
 
         // Lists
         capabilitiesList,
@@ -435,11 +338,12 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
         // Websocket
         setWebSocketSender,
         handleIncomingStatusUpdate,
+        initializeFromServerState,
+        setConnectionStatus,
 
         // Actions
         updateCapabilityStatus,
         updateServerStatus,
-        initializePlaceholderData,
         rebuildIndexes
     }
 })

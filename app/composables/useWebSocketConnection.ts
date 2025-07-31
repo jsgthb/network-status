@@ -3,14 +3,20 @@ export const useWebSocketConnection = () => {
         immediate: false,
         onConnected: (ws) => {
             console.log("Websocket connected")
+            const store = useInfrastructureStore()
+            store.setConnectionStatus(true)
         },
 
         onDisconnected: () => {
             console.log("Websocket disconnected")
+            const store = useInfrastructureStore()
+            store.setConnectionStatus(false)
         },
 
         onError: (ws, error) => {
             console.error("Websocket error:", error)
+            const store = useInfrastructureStore()
+            store.setConnectionStatus(false)
         },
 
         onMessage: (ws, event) => {
@@ -18,19 +24,33 @@ export const useWebSocketConnection = () => {
                 const parsedData = JSON.parse(event.data)
                 console.log("Received websocket message:", parsedData)
 
-                if (!parsedData.payload) return
+                if (!parsedData.payload) {
+                    console.warn("Received message without payload:", parsedData)
+                    return
+                }
+
+                const store = useInfrastructureStore()
+
                 switch (parsedData.type) {
+                    case "current_state": {
+                        store.initializeFromServerState(parsedData.payload)
+                        break;
+                    }
                     case "status_update": {
-                        const store = useInfrastructureStore()
                         store.handleIncomingStatusUpdate(parsedData.payload)
                         break;
                     }
+                    case "error": {
+                        console.error("Received error from server:", parsedData.payload)
+                        break;
+                    }
                     default: {
+                        console.warn("Unknown message type:", parsedData.type)
                         break;
                     }
                 }
             } catch (error) {
-                console.log("Raw message (not JSON):", event.data)
+                console.error("Error parsing websocket message:", error)
             }
         }
     })

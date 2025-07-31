@@ -30,3 +30,10 @@ export interface CapabilityZoneRelation {
     capabilityId: string
     zoneId: string
 }
+
+export interface InfrastructureState {
+    capabilities: Capability[]
+    zones: Zone[]
+    servers: Server[]
+    capabilityZoneRelations: CapabilityZoneRelation[]
+}
