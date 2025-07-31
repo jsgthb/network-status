@@ -181,16 +181,19 @@
             <div class="text-sm font-medium">
               {{ store.getServersByZone(zone.id).length }} Server(s)
             </div>
-            <div class="flex flex-wrap gap-1">
-              <UBadge
+            <div class="flex flex-wrap gap-1.5">
+              <div
                 v-for="server in store.getServersByZone(zone.id)"
                 :key="server.id"
-                :color="getStatusColor(store.getServerById(server.id)?.status!)"
-                variant="subtle"
-                size="lg"
+                :class="getServerIconColor(store.getServerById(server.id)?.status!)"
+                :title="`${server.name} (${server.description.os}) - ${store.getServerById(server.id)?.status}`"
+                class="w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-all hover:scale-110"
               >
-                {{ server.name }}
-              </UBadge>
+                <UIcon 
+                  :name="`i-simple-icons-${getOSIcon(server.description.os)}`" 
+                  class="w-4 h-4 text-gray"
+                />
+              </div>
             </div>
           </div>
 
@@ -299,6 +302,35 @@ const getStatusColor = (status: string) => {
     case "Compromised": return "error"
     default: return "warning"
   }
+}
+
+const getServerIconColor = (status: string) => {
+  switch (status) {
+    case "Healthy": return "bg-emerald-500/20 border border-emerald-500/30"
+    case "Compromised": return "bg-red-500/20 border border-red-500/30"
+    default: return "bg-amber-500/20 border border-amber-500/30"
+  }
+}
+
+const getOSIcon = (osString: string) => {
+  const os = osString.toLowerCase()
+  
+  if (os.includes("windows")) return "windows"
+  if (os.includes("ubuntu")) return "ubuntu"
+  if (os.includes("debian")) return "debian"
+  if (os.includes("centos")) return "centos"
+  if (os.includes("redhat") || os.includes("rhel")) return 'redhat'
+  if (os.includes("fedora")) return "fedora"
+  if (os.includes("opensuse") || os.includes("suse")) return "opensuse"
+  if (os.includes("arch")) return "archlinux"
+  if (os.includes("alpine")) return "alpinelinux"
+  if (os.includes("freebsd")) return "freebsd"
+  if (os.includes("openbsd")) return "openbsd"
+  if (os.includes("macos") || os.includes("darwin")) return 'apple'
+  if (os.includes("linux")) return "linux"
+  
+  // Default fallback
+  return "linux"
 }
 
 const updateCapabilityStatus = (capabilityId: string, status: "Healthy" | "Compromised" | "Unknown") => {
