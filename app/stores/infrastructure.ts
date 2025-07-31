@@ -10,7 +10,6 @@ export interface Capability {
 export interface Zone {
     id: string
     name: string
-    capabilityId: string
     lastUpdated: Date
 }
 
@@ -29,6 +28,11 @@ export interface StatusUpdate {
     timestamp: Date
 }
 
+export interface CapabilityZoneRelation {
+    capabilityId: string
+    zoneId: string
+}
+
 export const useInfrastructureStore = defineStore("infrastructure", () => {
     const websocketSender = ref<((message: any) => void) | null>(null)
 
@@ -36,10 +40,12 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
     const capabilities = ref<Map<string, Capability>>(new Map)
     const zones = ref<Map<string, Zone>>(new Map)
     const servers = ref<Map<string, Server>>(new Map)
+    const capabilityZoneRelations = ref<Set<string>>(new Set)
 
     // Lookup tables
     const serversByZone = ref<Map<string, Set<string>>>(new Map())
     const zonesByCapability = ref<Map<string, Set<string>>>(new Map())
+    const capabilitiesByZone = ref<Map<string, Set<string>>>(new Map())
     const serversByStatus = ref<Map<string, Set<string>>>(new Map())
     const capabilitiesByStatus = ref<Map<string, Set<string>>>(new Map())
 
@@ -62,11 +68,30 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
             }
         }
     }
+
+    // Capability zone relationship helpers
+    const addCapabilityZoneRelation = (capabilityId: string, zoneId: string) => {
+        const relationKey = `${capabilityId}::${zoneId}`
+        capabilityZoneRelations.value.add(relationKey)
+
+        addToIndex(zonesByCapability.value, capabilityId, zoneId)
+        addToIndex(capabilitiesByZone.value, zoneId, capabilityId)
+    }
+    const removeCapabilityZoneRelation = (capabilityId: string, zoneId: string) => {
+        const relationKey = `${capabilityId}::${zoneId}`
+        capabilityZoneRelations.value.delete(relationKey)
+
+        removeFromIndex(zonesByCapability.value, capabilityId, zoneId)
+        removeFromIndex(capabilitiesByZone.value, zoneId, capabilityId)
+    }
+
+
     const rebuildIndexes = () => {
         serversByZone.value.clear()
         zonesByCapability.value.clear()
         serversByStatus.value.clear()
         capabilitiesByStatus.value.clear()
+        capabilitiesByZone.value.clear()
         zoneHealthCache.value.clear()
 
         // Server indexes
@@ -75,9 +100,11 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
             addToIndex(serversByStatus.value, server.status, server.id)
         }
 
-        // Zone indexes
-        for (const zone of zones.value.values()) {
-            addToIndex(zonesByCapability.value, zone.capabilityId, zone.id)
+        // Zone and capability relationship indexes
+        for (const relationKey of capabilityZoneRelations.value) {
+            const [capabilityId, zoneId] = relationKey.split("::")
+            addToIndex(zonesByCapability.value, capabilityId, zoneId)
+            addToIndex(capabilitiesByZone.value, zoneId, capabilityId)
         }
 
         // Capability indexes
@@ -129,25 +156,21 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
             {
                 id: "zone-us-east",
                 name: "US East",
-                capabilityId: "cap-web-services",
                 lastUpdated: new Date()
             },
             {
                 id: "zone-us-west",
                 name: "US West",
-                capabilityId: "cap-web-services",
                 lastUpdated: new Date()
             },
             {
                 id: "zone-eu-central",
                 name: "EU Central",
-                capabilityId: "cap-data-storage",
                 lastUpdated: new Date()
             },
             {
                 id: "zone-asia-pacific",
                 name: "Asia Pacific",
-                capabilityId: "cap-api-gateway",
                 lastUpdated: new Date()
             }
         ]
@@ -216,6 +239,19 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
             }
         ]
 
+        // Capability zone relationships
+        const placeholderRelations: CapabilityZoneRelation[] = [
+            // Web services
+            { capabilityId: "cap-web-services", zoneId: "zone-us-east"},
+            { capabilityId: "cap-web-services", zoneId: "zone-us-west"},
+            // Data storage
+            { capabilityId: "cap-data-storage", zoneId: "zone-us-east"},
+            { capabilityId: "cap-data-storage", zoneId: "zone-us-west"},
+            { capabilityId: "cap-data-storage", zoneId: "zone-eu-central"},
+            // API gateway
+            { capabilityId: "cap-api-gateway", zoneId: "zone-asia-pacific"},
+        ]
+
         // Populate state
         capabilities.value.clear()
         placeholderCapabilities.forEach(capability => capabilities.value.set(capability.id, capability))
@@ -224,7 +260,12 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
         placeholderZones.forEach(zone => zones.value.set(zone.id, zone))
 
         servers.value.clear()
-        placeholderServers.forEach(server => servers.value.set(server.id, server))   
+        placeholderServers.forEach(server => servers.value.set(server.id, server))
+        
+        capabilityZoneRelations.value.clear()
+        placeholderRelations.forEach(relation => {
+            addCapabilityZoneRelation(relation.capabilityId, relation.zoneId)
+        })
         
         // Rebuild lookup table indexes with state
         rebuildIndexes()
@@ -242,6 +283,10 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
     const getZonesByCapability = (capabilityId: string): Zone[] => {
         const zoneIds = zonesByCapability.value.get(capabilityId) || new Set()
         return Array.from(zoneIds).map(id => zones.value.get(id)!).filter(Boolean)
+    }
+    const getCapabilitiesByZone = (zoneId: string): Capability[] => {
+        const capabilityIds = capabilitiesByZone.value.get(zoneId) || new Set()
+        return Array.from(capabilityIds).map(id => capabilities.value.get(id)!).filter(Boolean)
     }
     const getServersByZone = (zoneId: string): Server[] => {
         const serverIds = serversByZone.value.get(zoneId) || new Set()
@@ -400,6 +445,7 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
         getZonesByCapability,
         getServersByZone,
         getServersByCapability,
+        getCapabilitiesByZone,
 
         // Status filters
         healthyCapabilities,

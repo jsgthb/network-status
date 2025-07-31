@@ -156,8 +156,24 @@
             </UBadge>
           </div>
 
-          <div class="text-sm text-gray-600 mb-3">
-            Capability: {{ store.getCapabilityById(zone.capabilityId)?.name }}
+          <div class="text-sm mb-3">
+            <div class="mb-2">
+              <span class="font-medium">Assigned Capabilites</span>
+            </div>
+            <div class="flex flex-wrap gap-1">
+              <UBadge
+                v-for="capability in store.getCapabilitiesByZone(zone.id)"
+                :key="capability.id"
+                :color="getStatusColor(capability.status)"
+                variant="subtle"
+                size="sm"
+              >
+                {{ capability.name }}
+              </UBadge>
+            </div>
+            <div v-if="store.getCapabilitiesByZone(zone.id).length === 0" class="text-gray-500 text-sm">
+              No capabilities assigned
+            </div>
           </div>
 
           <!-- Server in zone -->
