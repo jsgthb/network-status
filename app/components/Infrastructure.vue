@@ -99,7 +99,7 @@
           <div class="text-sm font-medium mb-3">Actions</div>
           <div class="flex justify-between gap-1">
             <UButton
-              @click="updateCapabilityStatus(capability.id, 'Healthy')"
+              @click="updateCapabilityStatus(capability.id, statusEnum.Green)"
               size="xs"
               color="info"
               variant="outline"
@@ -107,7 +107,7 @@
               Set Healthy
             </UButton>
             <UButton
-              @click="updateCapabilityStatus(capability.id, 'Compromised')"
+              @click="updateCapabilityStatus(capability.id, statusEnum.Red)"
               size="xs"
               color="info"
               variant="outline"
@@ -115,7 +115,7 @@
               Set Compromised
             </UButton>
             <UButton
-              @click="updateCapabilityStatus(capability.id, 'Unknown')"
+              @click="updateCapabilityStatus(capability.id, statusEnum.Yellow)"
               size="xs"
               color="info"
               variant="outline"
@@ -258,7 +258,7 @@
           <div class="text-sm font-medium mb-3">Actions</div>
           <div class="flex justify-between gap-1">
             <UButton
-              @click="updateServerStatus(server.id, 'Healthy')"
+              @click="updateServerStatus(server.id, statusEnum.Green)"
               size="xs"
               color="info"
               variant="outline"
@@ -266,7 +266,7 @@
               Set Healthy
             </UButton>
             <UButton
-              @click="updateServerStatus(server.id, 'Compromised')"
+              @click="updateServerStatus(server.id, statusEnum.Red)"
               size="xs"
               color="info"
               variant="outline"
@@ -274,7 +274,7 @@
               Set Compromised
             </UButton>
             <UButton
-              @click="updateServerStatus(server.id, 'Unknown')"
+              @click="updateServerStatus(server.id, statusEnum.Yellow)"
               size="xs"
               color="info"
               variant="outline"
@@ -292,8 +292,10 @@
 
 <script setup lang="ts">
 import { useInfrastructureStore } from '#imports';
+import { Status } from '~/types/infrastructureTypes';
 
 const store = useInfrastructureStore()
+const statusEnum = Status
 
 // Helper functions
 const getStatusColor = (status: string) => {
@@ -333,7 +335,7 @@ const getOSIcon = (osString: string) => {
   return "linux"
 }
 
-const updateCapabilityStatus = (capabilityId: string, status: "Healthy" | "Compromised" | "Unknown") => {
+const updateCapabilityStatus = (capabilityId: string, status: Status) => {
   store.updateCapabilityStatus({
     id: capabilityId,
     type: "Capability",
@@ -342,7 +344,7 @@ const updateCapabilityStatus = (capabilityId: string, status: "Healthy" | "Compr
   })
 }
 
-const updateServerStatus = (serverId: string, status: "Healthy" | "Compromised" | "Unknown") => {
+const updateServerStatus = (serverId: string, status: Status) => {
   store.updateServerStatus({
     id: serverId,
     type: "Server",

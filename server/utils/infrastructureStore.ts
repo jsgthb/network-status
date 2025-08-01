@@ -1,9 +1,10 @@
-import type {
+import {
     Capability,
     Zone,
     Server,
     CapabilityZoneRelation,
-    InfrastructureState
+    InfrastructureState,
+    Status
 } from "~/types/infrastructureTypes"
 
 class InfrastructureStore {
@@ -22,19 +23,19 @@ class InfrastructureStore {
             {
                 id: "cap-web-services",
                 name: "Web Services",
-                status: "Healthy",
+                status: Status.Green,
                 lastUpdated: new Date()
             },
             {
                 id: "cap-data-storage",
                 name: "Data Storage",
-                status: "Compromised",
+                status: Status.Green,
                 lastUpdated: new Date()
             },
             {
                 id: "cap-api-gateway",
                 name: "API Gateway",
-                status: "Healthy",
+                status: Status.Green,
                 lastUpdated: new Date()
             }
         ]
@@ -69,7 +70,7 @@ class InfrastructureStore {
             {
                 id: "server-use-web-01",
                 name: "Web Server 01",
-                status: "Healthy",
+                status: Status.Green,
                 zoneId: "zone-us-east",
                 lastUpdated: new Date(),
                 description: {
@@ -79,7 +80,7 @@ class InfrastructureStore {
             {
                 id: "server-use-web-02",
                 name: "Web Server 02",
-                status: "Healthy",
+                status: Status.Green,
                 zoneId: "zone-us-east",
                 lastUpdated: new Date(),
                 description: {
@@ -90,7 +91,7 @@ class InfrastructureStore {
             {
                 id: "server-usw-web-01",
                 name: "Web Server 01",
-                status: "Healthy",
+                status: Status.Green,
                 zoneId: "zone-us-west",
                 lastUpdated: new Date(),
                 description: {
@@ -100,7 +101,7 @@ class InfrastructureStore {
             {
                 id: "server-usw-web-02",
                 name: "Web Server 02",
-                status: "Healthy",
+                status: Status.Green,
                 zoneId: "zone-us-west",
                 lastUpdated: new Date(),
                 description: {
@@ -111,7 +112,7 @@ class InfrastructureStore {
             {
                 id: "server-eu-db-01",
                 name: "Database Server 01",
-                status: "Healthy",
+                status: Status.Green,
                 zoneId: "zone-eu-central",
                 lastUpdated: new Date(),
                 description: {
@@ -121,7 +122,7 @@ class InfrastructureStore {
             {
                 id: "server-eu-cache-01",
                 name: "Cache Server 01",
-                status: "Healthy",
+                status: Status.Green,
                 zoneId: "zone-eu-central",
                 lastUpdated: new Date(),
                 description: {
@@ -132,7 +133,7 @@ class InfrastructureStore {
             {
                 id: "server-ap-api-01",
                 name: "API Server 01",
-                status: "Healthy",
+                status: Status.Green,
                 zoneId: "zone-asia-pacific",
                 lastUpdated: new Date(),
                 description: {
@@ -142,7 +143,7 @@ class InfrastructureStore {
             {
                 id: "server-ap-lb-01",
                 name: "Load Balancer 01",
-                status: "Healthy",
+                status: Status.Green,
                 zoneId: "zone-asia-pacific",
                 lastUpdated: new Date(),
                 description: {

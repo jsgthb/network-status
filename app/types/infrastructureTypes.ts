@@ -1,7 +1,7 @@
 export interface Capability {
     id: string
     name: string
-    status: "Healthy" | "Compromised" | "Unknown"
+    status: Status
     lastUpdated: Date
 }
 
@@ -14,7 +14,7 @@ export interface Zone {
 export interface Server {
     id: string
     name: string
-    status: "Healthy" | "Compromised" | "Unknown"
+    status: Status
     zoneId: string
     lastUpdated: Date
     description: {
@@ -25,7 +25,7 @@ export interface Server {
 export interface StatusUpdate {
     id: string
     type: "Capability" | "Server"
-    status: "Healthy" | "Compromised" | "Unknown"
+    status: Status
     timestamp: Date
 }
 
@@ -39,4 +39,10 @@ export interface InfrastructureState {
     zones: Zone[]
     servers: Server[]
     capabilityZoneRelations: CapabilityZoneRelation[]
+}
+
+export enum Status {
+    Green = "Healthy",
+    Yellow = "Unknown",
+    Red= "Compromised"
 }
