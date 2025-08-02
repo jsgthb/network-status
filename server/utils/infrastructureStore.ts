@@ -181,6 +181,36 @@ class InfrastructureStore {
         })
     }
 
+    replaceState(newState: InfrastructureState): void {
+        console.log("Replacing infrastructure store state...")
+
+        // Clear existing state
+        this.capabilities.clear()
+        this.zones.clear()
+        this.servers.clear()
+        this.capabilityZoneRelations.clear()
+
+        // Load new state
+        newState.capabilities.forEach(capability => {
+            this.capabilities.set(capability.id, capability)
+        })
+        
+        newState.zones.forEach(zone => {
+            this.zones.set(zone.id, zone)
+        })
+        
+        newState.servers.forEach(server => {
+            this.servers.set(server.id, server)
+        })
+        
+        newState.capabilityZoneRelations.forEach(relation => {
+            const relationKey = `${relation.capabilityId}::${relation.zoneId}`
+            this.capabilityZoneRelations.add(relationKey)
+        })
+        
+        console.log("Infrastructure store state replaced successfully")
+    }
+
     getCurrentState(): InfrastructureState {
         return {
             capabilities: Array.from(this.capabilities.values()),
