@@ -45,90 +45,99 @@ export class YAMLConfigParser {
         return `server-${zonePrefix}-${serverPrefix}`
     }
 
-    public parseYAMLConfig(yamlContent: string): InfrastructureState {
+    public parseYAMLtoConfig(yamlContent: string): YAMLInfrastructureConfig {
         try {
             const config: YAMLInfrastructureConfig = parseYaml(yamlContent)
-            const capabilities: Capability[] = []
-            const zones: Zone[] = []
-            const servers: Server[] = []
-            const capabilityZoneRelations: CapabilityZoneRelation[] = []
-            const now = new Date()
 
-            // Process zones and associated servers
-            for (const [zoneKey, zoneData] of Object.entries(config.zones)) {
-                const zoneId = this.generateId("zone", zoneKey)
-
-                // Create zone
-                const zone: Zone = {
-                    id: zoneId,
-                    name: zoneData.name,
-                    lastUpdated: now
-                }
-                zones.push(zone)
-
-                // Add servers to zone
-                if (!zoneData.servers) {
-                    console.warn(`Zone "${zoneKey}" has no servers, skipping`)
-                    continue
-                }
-                for (const serverData of zoneData.servers) {
-                    const serverId = this.generateServerId(zoneKey, serverData.name)
-
-                    const server: Server = {
-                        id: serverId,
-                        name: serverData.name,
-                        status: Status.Green,
-                        zoneId: zoneId,
-                        lastUpdated: now,
-                        description: {
-                            os: serverData.os
-                        }
-                    }
-                    servers.push(server)
-                }
+            if (!config) {
+                throw new Error("YAML content is empty or invalid")
             }
 
-            // Process capabilities and zone relationships
-            for (const [capKey, capData] of Object.entries(config.capabilities)) {
-                const capabilityId = this.generateId("cap", capKey)
-
-                // Create capability
-                const capability: Capability = {
-                    id: capabilityId,
-                    name: capData.name,
-                    status: Status.Green,
-                    lastUpdated: now
-                }
-                capabilities.push(capability)
-
-                // Create capability zone relationships
-                if (!capData.zones) {
-                    console.warn(`Capability "${capKey}" has no zones assigned, skipping`)
-                    continue
-                }
-                for (const zoneName of capData.zones) {
-                    const zoneId = this.generateId("zone", zoneName)
-
-                    // Verify zone exists
-                    if (zones.find(z => z.id === zoneId)) {
-                        capabilityZoneRelations.push({
-                            capabilityId,
-                            zoneId
-                        })
-                    } else {
-                        console.warn(`Zone "${zoneName}" referenced in capability "${capKey}" not found`)
-                    }
-                }
-            }
-
-            return {
-                capabilities,
-                zones,
-                servers,
-                capabilityZoneRelations
-            }
+            return config
         } catch (error) {
-            throw new Error(`Failed to parse YAML configuration: ${error}`)
+            throw new Error(`Failed to parse YAML: ${error instanceof Error ? error.message : 'Unknown parsing error'}`)
+        }
+    }
+
+    public transformConfigToState(config: YAMLInfrastructureConfig): InfrastructureState {
+        const capabilities: Capability[] = []
+        const zones: Zone[] = []
+        const servers: Server[] = []
+        const capabilityZoneRelations: CapabilityZoneRelation[] = []
+        const now = new Date()
+
+        // Process zones and associated servers
+        for (const [zoneKey, zoneData] of Object.entries(config.zones)) {
+            const zoneId = this.generateId("zone", zoneKey)
+
+            // Create zone
+            const zone: Zone = {
+                id: zoneId,
+                name: zoneData.name,
+                lastUpdated: now
+            }
+            zones.push(zone)
+
+            // Add servers to zone
+            if (!zoneData.servers) {
+                console.warn(`Zone "${zoneKey}" has no servers, skipping`)
+                continue
+            }
+            for (const serverData of zoneData.servers) {
+                const serverId = this.generateServerId(zoneKey, serverData.name)
+
+                const server: Server = {
+                    id: serverId,
+                    name: serverData.name,
+                    status: Status.Green,
+                    zoneId: zoneId,
+                    lastUpdated: now,
+                    description: {
+                        os: serverData.os
+                    }
+                }
+                servers.push(server)
+            }
+        }
+
+        // Process capabilities and zone relationships
+        for (const [capKey, capData] of Object.entries(config.capabilities)) {
+            const capabilityId = this.generateId("cap", capKey)
+
+            // Create capability
+            const capability: Capability = {
+                id: capabilityId,
+                name: capData.name,
+                status: Status.Green,
+                lastUpdated: now
+            }
+            capabilities.push(capability)
+
+            // Create capability zone relationships
+            if (!capData.zones) {
+                console.warn(`Capability "${capKey}" has no zones assigned, skipping`)
+                continue
+            }
+            for (const zoneName of capData.zones) {
+                const zoneId = this.generateId("zone", zoneName)
+
+                // Verify zone exists
+                if (zones.find(z => z.id === zoneId)) {
+                    capabilityZoneRelations.push({
+                        capabilityId,
+                        zoneId
+                    })
+                } else {
+                    console.warn(`Zone "${zoneName}" referenced in capability "${capKey}" not found`)
+                }
+            }
+        }
+
+        return {
+            capabilities,
+            zones,
+            servers,
+            capabilityZoneRelations
         }
     }
 
