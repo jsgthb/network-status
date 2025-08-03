@@ -19,6 +19,8 @@ export interface Server {
     lastUpdated: Date
     description: {
         os: string
+        ipv4: Array<string>
+        ipv6: Array<string>
     }
 }
 

@@ -21,6 +21,8 @@ export interface YAMLInfrastructureConfig {
             servers: Array<{
                 name: string
                 os: string
+                ipv4: Array<string>
+                ipv6: Array<string>
             }>
         }
     }
@@ -93,7 +95,9 @@ export class YAMLConfigParser {
                     zoneId: zoneId,
                     lastUpdated: now,
                     description: {
-                        os: serverData.os
+                        os: serverData.os,
+                        ipv4: serverData.ipv4,
+                        ipv6: serverData.ipv6
                     }
                 }
                 servers.push(server)
@@ -182,6 +186,12 @@ export class YAMLConfigParser {
                 }
                 if (!server.os) {
                     errors.push(`Server "${server.name}" in zone "${zoneKey}" missing OS`)
+                }
+                if (!server.ipv4) {
+                    errors.push(`Server "${server.name}" in zone "${zoneKey}" missing IPv4 address array`)
+                }
+                if (!server.ipv6) {
+                    errors.push(`Server "${server.name}" in zone "${zoneKey}" missing IPv6 address array`)
                 }
             }
         }
