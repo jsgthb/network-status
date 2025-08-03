@@ -11,8 +11,17 @@
 
     <!-- Main application -->
     <div v-else class="p-6 max-w-7xl mx-auto space-y-6">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold mb-2">Network Status Dashboard</h1>
+        <div class="flex justify-between items-center mb-8">
+            <div></div> <!-- Empty div for flex spacing -->
+            <h1 class="text-3xl font-bold">Network Status Dashboard</h1>
+            <UButton
+                @click="navigateToAdmin"
+                variant="outline"
+                size="sm"
+                icon="i-heroicons-cog-6-tooth"
+            >
+                Admin
+            </UButton>
         </div>
 
         <!-- Quick summary of elements -->
@@ -36,4 +45,8 @@ import InfrastructureZones from "~/components/infrastructure/Zones.vue"
 import InfrastructureServers from "~/components/infrastructure/Servers.vue"
 
 const store = useInfrastructureStore()
+
+const navigateToAdmin = () => {
+    navigateTo('/admin')
+}
 </script>
