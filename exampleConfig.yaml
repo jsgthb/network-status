@@ -1,0 +1,95 @@
+metadata:
+  name: "Example Infrastructure"
+  version: "1.0"
+  description: "An example infrastructure configuration"
+
+# Zones and associated servers
+zones:
+  us-east:
+    name: "US East"
+    description: "Primary US East coast datacenter"
+    servers:
+      - name: "Web Server 01"
+        os: "Debian 12"
+        ipv4: ["10.1.1.21", "192.168.105.10", "192.168.105.11"] # Servers can have multiple IP addresses
+        ipv6: ["fd00:1001::21", "fd00:6004::10"]
+      - name: "Web Server 02"
+        os: "Debian 12"
+        ipv4: ["10.2.1.10", "192.168.107.10", "172.16.1.10"]
+        ipv6: ["fd00:2001::10", "fd00:7001::11", "fd00:7005::11"]
+      - name: "Database Server 01"
+        os: "FreeBSD 14.1"
+        ipv4: ["10.2.4.10"]
+        ipv6: ["fd00:2004::10"]
+      - name: "Cache Server 01"
+        os: "RHEL 10"
+        ipv4: ["10.3.2.10"]
+        ipv6: ["fd00:3002::10"]
+  
+  us-west:
+    name: "US West"
+    description: "West coast datacenter for redundancy"
+    servers:
+      - name: "Web Server 01"
+        os: "Windows Server 2025"
+        ipv4: ["10.3.5.11"]
+        ipv6: [] # Leave array empty if no IP address is available
+      - name: "Load Balancer 01"
+        os: "Windows Server 2025"
+        ipv4: ["10.3.8.10"]
+        ipv6: ["fd00:3008::10"]
+
+  eu-central:
+    name: "EU Central"
+    description: "Main european operations center"
+    servers:
+      - name: "Database Server 01"
+        os: "Arch Linux 2025.07.01"
+        ipv4: ["10.4.2.10"]
+        ipv6: ["fd00:4002::10"]
+      - name: "API Server 01"
+        os: "Arch Linux 2025.07.01"
+        ipv4: ["10.4.5.10", "172.16.8.10", "172.16.9.10", "172.17.2.10", "172.17.4.10"]
+        ipv6: ["fd00:4005::10", "fd00:7008::10", "fd00:8004::10", "fd00:8006::10", "fd00:8007::10"]
+  
+  eu-west:
+    name: "EU West"
+    description: "Scondary european operations center"
+    servers:
+      - name: "Database Server 02"
+        os: "Arch Linux 2025.07.01"
+        ipv4: []
+        ipv6: ["fd00:4007::10"]
+      - name: "Backup Server 01"
+        os: "Arch Linux 2025.07.01"
+        ipv4: ["10.4.1.20"]
+        ipv6: ["fd00:4001::20"]
+      - name: "Backup Server 01"
+        os: "Arch Linux 2025.07.01"
+        ipv4: ["192.168.1.12"]
+        ipv6: ["fd00:5001::12"]
+
+# Capabilities and zone references
+capabilities:
+  web-services:
+    name: "Web Services"
+    description: "Frontend web servers and load balancers"
+    # List of which zones this capability is assigned to
+    # Make sure that the names used here are the same as keys used for zones
+    zones:
+     - us-east
+     - us-west
+  
+  data-storage:
+    name: "Data Storage"
+    description: "Database and caching infrastructure"
+    zones:
+      - us-east
+      - eu-central
+      - eu-west
+  
+  api-gateway:
+    name: "API Gateway"
+    description: "API routing and authentication"
+    zones:
+      - eu-central
