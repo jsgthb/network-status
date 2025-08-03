@@ -21,7 +21,13 @@
 
             <div class="space-y-6">
                 <!-- File upload area-->
-                <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center transition-colors hover:border-gray-400">
+                <div 
+                    class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center transition-colors hover:border-gray-400"
+                    @dragover.prevent
+                    @dragenter.prevent  
+                    @dragleave.prevent
+                    @drop.prevent="handleDrop"
+                >
                     <input
                         ref="fileInput"
                         type="file"
@@ -237,5 +243,24 @@ const clearFile = (keepStatus = false) => {
 
 const navigateToInfrastructure = () => {
     navigateTo("/")
+}
+
+const handleDrop = (event: DragEvent) => {
+    const files = event.dataTransfer?.files
+    if (files && files.length > 0) {
+        const file = files[0]
+        
+        if (!file) return
+        
+        if (file.name.endsWith(".yaml") || file.name.endsWith(".yml")) {
+            selectedFile.value = file
+            uploadStatus.value = null
+        } else {
+            uploadStatus.value = {
+                success: false,
+                message: 'Please drop a .yaml or .yml file'
+            }
+         }
+    }
 }
 </script>
