@@ -1,70 +1,67 @@
 <template>
-    <UCard>
-      <template #header>
-        <h2 class="text-xl font-semibold">Zones</h2>
-      </template>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div
-          v-for="zone in store.zonesList"
-          :key="zone.id"
-          class="border rounded-lg p-4 border-gray-800"
+  <div class="border-b border-gray-800 pb-3 mb-6 ml-1 pt-5">
+    <h2 class="text-xl font-semibold">Zones</h2>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div
+      v-for="zone in store.zonesList"
+      :key="zone.id"
+      class="border rounded-lg p-4 border-gray-800"
+    >
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-medium">{{ zone.name }}</h3>
+        <UBadge
+          :color="getStatusColor(store.getZoneHealth(zone.id))"
+          variant="subtle"
+          size="lg"
         >
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="font-medium">{{ zone.name }}</h3>
-            <UBadge
-              :color="getStatusColor(store.getZoneHealth(zone.id))"
-              variant="subtle"
-              size="lg"
-            >
-              {{ store.getZoneHealth(zone.id) }}
-            </UBadge>
-          </div>
+          {{ store.getZoneHealth(zone.id) }}
+        </UBadge>
+      </div>
 
-          <div class="text-sm mb-3">
-            <div class="mb-2">
-              <span class="font-medium">Assigned Capabilites</span>
-            </div>
-            <div class="flex flex-wrap gap-1">
-              <UBadge
-                v-for="capability in store.getCapabilitiesByZone(zone.id)"
-                :key="capability.id"
-                :color="getStatusColor(capability.status)"
-                variant="subtle"
-                size="sm"
-              >
-                {{ capability.name }}
-              </UBadge>
-            </div>
-            <div v-if="store.getCapabilitiesByZone(zone.id).length === 0" class="text-gray-500 text-sm">
-              No capabilities assigned
-            </div>
-          </div>
-
-          <!-- Server in zone -->
-          <div class="space-y-2">
-            <div class="text-sm font-medium">
-              {{ store.getServersByZone(zone.id).length }} Server(s)
-            </div>
-            <div class="flex flex-wrap gap-1.5">
-              <div
-                v-for="server in store.getServersByZone(zone.id)"
-                :key="server.id"
-                :class="getServerIconColor(store.getServerById(server.id)?.status!)"
-                :title="`${server.name} (${server.description.os}) - ${store.getServerById(server.id)?.status}`"
-                class="w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-all hover:scale-110"
-              >
-                <UIcon 
-                  :name="`i-simple-icons-${getOSIcon(server.description.os)}`" 
-                  class="w-4 h-4 text-gray"
-                />
-              </div>
-            </div>
-          </div>
-
+      <div class="text-sm mb-3">
+        <div class="mb-2">
+          <span class="font-medium">Assigned Capabilites</span>
+        </div>
+        <div class="flex flex-wrap gap-1">
+          <UBadge
+            v-for="capability in store.getCapabilitiesByZone(zone.id)"
+            :key="capability.id"
+            :color="getStatusColor(capability.status)"
+            variant="subtle"
+            size="sm"
+          >
+            {{ capability.name }}
+          </UBadge>
+        </div>
+        <div v-if="store.getCapabilitiesByZone(zone.id).length === 0" class="text-gray-500 text-sm">
+          No capabilities assigned
         </div>
       </div>
-    </UCard>
+
+      <!-- Server in zone -->
+      <div class="space-y-2">
+        <div class="text-sm font-medium">
+          {{ store.getServersByZone(zone.id).length }} Server(s)
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <div
+            v-for="server in store.getServersByZone(zone.id)"
+            :key="server.id"
+            :class="getServerIconColor(store.getServerById(server.id)?.status!)"
+            :title="`${server.name} (${server.description.os}) - ${store.getServerById(server.id)?.status}`"
+            class="w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-all hover:scale-110"
+          >
+            <UIcon 
+              :name="`i-simple-icons-${getOSIcon(server.description.os)}`" 
+              class="w-4 h-4 text-gray"
+            />
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
