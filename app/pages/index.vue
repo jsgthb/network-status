@@ -11,17 +11,20 @@
 
     <!-- Main application -->
     <div v-else class="p-6 max-w-7xl mx-auto space-y-6">
-        <div class="flex justify-between items-center mb-8">
+        <div class="grid grid-cols-3 items-center mb-8">
             <div></div> <!-- Empty div for flex spacing -->
-            <h1 class="text-3xl font-bold">Network Status Dashboard</h1>
-            <UButton
-                @click="navigateToAdmin"
-                variant="outline"
-                size="sm"
-                icon="i-heroicons-cog-6-tooth"
-            >
-                Admin
-            </UButton>
+            <h1 class="text-3xl font-bold text-center">Network Status Dashboard</h1>
+            <div class="flex justify-end">
+                <UButton
+                    @click="navigateToAdmin"
+                    variant="outline"
+                    size="sm"
+                    icon="i-heroicons-cog-6-tooth"
+                    color="info"
+                >
+                    Admin
+                </UButton>
+            </div>
         </div>
 
         <!-- Quick summary of elements -->

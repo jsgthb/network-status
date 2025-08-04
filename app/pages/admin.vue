@@ -1,14 +1,17 @@
 <template>
     <div class="p-6 max-w-4xl mx-auto space-y-6">
-        <div class="flex justify-between items-center mb-8">
-            <UButton
-                @click="navigateToInfrastructure"
-                variant="outline"
-                size="sm"
-                icon="i-heroicons-arrow-left"
-            >
-                Back
-            </UButton>
+        <div class="grid grid-cols-3 items-center mb-8">
+            <div class="flex justify-start">
+                <UButton
+                    @click="navigateToInfrastructure"
+                    variant="outline"
+                    size="sm"
+                    icon="i-heroicons-arrow-left"
+                    color="info"
+                >
+                    Back
+                </UButton>
+            </div>
             <h1 class="text-3xl font-bold">Admin Dashboard</h1>
             <div></div> <!-- Empty div for spacing -->
         </div>
@@ -44,7 +47,7 @@
                         </div>
                         <UButton
                             @click="triggerFileInput"
-                            color="primary"
+                            color="info"
                             variant="outline"
                         >
                             Select File
