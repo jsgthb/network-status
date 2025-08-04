@@ -4,7 +4,8 @@ import {
     Server,
     CapabilityZoneRelation,
     InfrastructureState,
-    Status
+    StatusServer,
+    StatusCapability
 } from "~/types/infrastructureTypes"
 
 class InfrastructureStore {
@@ -23,19 +24,19 @@ class InfrastructureStore {
             {
                 id: "cap-web-services",
                 name: "Web Services",
-                status: Status.Green,
+                status: StatusCapability.Green,
                 lastUpdated: new Date()
             },
             {
                 id: "cap-data-storage",
                 name: "Data Storage",
-                status: Status.Green,
+                status: StatusCapability.Green,
                 lastUpdated: new Date()
             },
             {
                 id: "cap-api-gateway",
                 name: "API Gateway",
-                status: Status.Green,
+                status: StatusCapability.Green,
                 lastUpdated: new Date()
             }
         ]
@@ -70,84 +71,100 @@ class InfrastructureStore {
             {
                 id: "server-use-web-01",
                 name: "Web Server 01",
-                status: Status.Green,
+                status: StatusServer.Green,
                 zoneId: "zone-us-east",
                 lastUpdated: new Date(),
                 description: {
-                    os: "Debian 12"
+                    os: "Debian 12",
+                    ipv4: [],
+                    ipv6: []
                 }
             },
             {
                 id: "server-use-web-02",
                 name: "Web Server 02",
-                status: Status.Green,
+                status: StatusServer.Green,
                 zoneId: "zone-us-east",
                 lastUpdated: new Date(),
                 description: {
-                    os: "Debian 12"
+                    os: "Debian 12",
+                    ipv4: [],
+                    ipv6: []
                 }
             },
             // US West Zone (Web Services Capability)
             {
                 id: "server-usw-web-01",
                 name: "Web Server 01",
-                status: Status.Green,
+                status: StatusServer.Green,
                 zoneId: "zone-us-west",
                 lastUpdated: new Date(),
                 description: {
-                    os: "Windows Server 2025"
+                    os: "Windows Server 2025",
+                    ipv4: [],
+                    ipv6: []
                 }
             },
             {
                 id: "server-usw-web-02",
                 name: "Web Server 02",
-                status: Status.Green,
+                status: StatusServer.Green,
                 zoneId: "zone-us-west",
                 lastUpdated: new Date(),
                 description: {
-                    os: "Windows Server 2025"
+                    os: "Windows Server 2025",
+                    ipv4: [],
+                    ipv6: []
                 }
             },
             // EU Central Zone (Data Storage Capability)
             {
                 id: "server-eu-db-01",
                 name: "Database Server 01",
-                status: Status.Green,
+                status: StatusServer.Green,
                 zoneId: "zone-eu-central",
                 lastUpdated: new Date(),
                 description: {
-                    os: "FreeBSD 14.1"
+                    os: "FreeBSD 14.1",
+                    ipv4: [],
+                    ipv6: []
                 }
             },
             {
                 id: "server-eu-cache-01",
                 name: "Cache Server 01",
-                status: Status.Green,
+                status: StatusServer.Green,
                 zoneId: "zone-eu-central",
                 lastUpdated: new Date(),
                 description: {
-                    os: "CentOS Stream 9"
+                    os: "CentOS Stream 9",
+                    ipv4: [],
+                    ipv6: []
                 }
             },
             // Asia Pacific Zone (API Gateway Capability)
             {
                 id: "server-ap-api-01",
                 name: "API Server 01",
-                status: Status.Green,
+                status: StatusServer.Green,
                 zoneId: "zone-asia-pacific",
                 lastUpdated: new Date(),
                 description: {
-                    os: "RHEL 10"
+                    os: "RHEL 10",
+                    ipv4: [],
+                    ipv6: []
                 }
             },
             {
                 id: "server-ap-lb-01",
                 name: "Load Balancer 01",
-                status: Status.Green,
+                status: StatusServer.Green,
                 zoneId: "zone-asia-pacific",
                 lastUpdated: new Date(),
                 description: {
-                    os: "Arch Linux 2025.07.01"
+                    os: "Arch Linux 2025.07.01",
+                    ipv4: [],
+                    ipv6: []
                 }
             }
         ]

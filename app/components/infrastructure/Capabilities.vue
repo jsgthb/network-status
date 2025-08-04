@@ -83,20 +83,23 @@
 
 <script setup lang="ts">
 import { useInfrastructureStore } from '#imports';
-import { Status } from '~/types/infrastructureTypes';
+import { StatusCapability, StatusServer } from '~/types/infrastructureTypes';
 
 const store = useInfrastructureStore()
-const statusEnum = Status
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case "Healthy": return "success"
-    case "Compromised": return "error"
+    case StatusCapability.Green: return "success"
+    case StatusCapability.Yellow: return "warning"
+    case StatusCapability.Red: return "error"
+    case StatusServer.Green: return "success"
+    case StatusServer.Yellow: return "warning"
+    case StatusServer.Red: return "error"
     default: return "warning"
   }
 }
 
-const updateCapabilityStatus = (capabilityId: string, status: Status) => {
+const updateCapabilityStatus = (capabilityId: string, status: StatusCapability) => {
   store.updateCapabilityStatus({
     id: capabilityId,
     type: "Capability",

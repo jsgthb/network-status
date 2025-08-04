@@ -66,23 +66,27 @@
 
 <script setup lang="ts">
 import { useInfrastructureStore } from '#imports';
-import { Status } from '~/types/infrastructureTypes';
+import { StatusCapability, StatusServer } from "~/types/infrastructureTypes"
 
 const store = useInfrastructureStore()
-const statusEnum = Status
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case "Healthy": return "success"
-    case "Compromised": return "error"
+    case StatusCapability.Green: return "success"
+    case StatusCapability.Yellow: return "warning"
+    case StatusCapability.Red: return "error"
+    case StatusServer.Green: return "success"
+    case StatusServer.Yellow: return "warning"
+    case StatusServer.Red: return "error"
     default: return "warning"
   }
 }
 
 const getServerIconColor = (status: string) => {
   switch (status) {
-    case "Healthy": return "bg-emerald-500/20 border border-emerald-500/30"
-    case "Compromised": return "bg-red-500/20 border border-red-500/30"
+    case StatusServer.Green: return "bg-emerald-500/20 border border-emerald-500/30"
+    case StatusServer.Red: return "bg-red-500/20 border border-red-500/30"
+    case StatusServer.Yellow: return "bg-amber-500/20 border border-amber-500/30"
     default: return "bg-amber-500/20 border border-amber-500/30"
   }
 }

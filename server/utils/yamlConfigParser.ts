@@ -5,7 +5,8 @@ import {
     Server,
     CapabilityZoneRelation,
     InfrastructureState,
-    Status
+    StatusServer,
+    StatusCapability
 } from "~/types/infrastructureTypes"
 
 export interface YAMLInfrastructureConfig {
@@ -91,7 +92,7 @@ export class YAMLConfigParser {
                 const server: Server = {
                     id: serverId,
                     name: serverData.name,
-                    status: Status.Green,
+                    status: StatusServer.Green,
                     zoneId: zoneId,
                     lastUpdated: now,
                     description: {
@@ -112,7 +113,7 @@ export class YAMLConfigParser {
             const capability: Capability = {
                 id: capabilityId,
                 name: capData.name,
-                status: Status.Green,
+                status: StatusCapability.Green,
                 lastUpdated: now
             }
             capabilities.push(capability)

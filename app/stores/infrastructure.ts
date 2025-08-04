@@ -5,7 +5,8 @@ import {
     type Server,
     type StatusUpdate,
     type InfrastructureState,
-    Status
+    StatusServer,
+    StatusCapability
 } from "~/types/infrastructureTypes"
 
 export const useInfrastructureStore = defineStore("infrastructure", () => {
@@ -187,38 +188,38 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
 
     // Status based getters
     const healthyCapabilities = computed(() => {
-        const ids = capabilitiesByStatus.value.get(Status.Green) || new Set()
+        const ids = capabilitiesByStatus.value.get(StatusCapability.Green) || new Set()
         return Array.from(ids).map(id => capabilities.value.get(id)!).filter(Boolean)
     })
     const compromisedCapabilities = computed(() => {
-        const ids = capabilitiesByStatus.value.get(Status.Red) || new Set()
+        const ids = capabilitiesByStatus.value.get(StatusCapability.Red) || new Set()
         return Array.from(ids).map(id => capabilities.value.get(id)!).filter(Boolean)
     })
     const unknownCapabilities = computed(() => {
-        const ids = capabilitiesByStatus.value.get(Status.Yellow) || new Set()
+        const ids = capabilitiesByStatus.value.get(StatusCapability.Yellow) || new Set()
         return Array.from(ids).map(id => capabilities.value.get(id)!).filter(Boolean)
     })
     const healthyServers = computed(() => {
-        const ids = serversByStatus.value.get(Status.Green) || new Set()
+        const ids = serversByStatus.value.get(StatusServer.Green) || new Set()
         return Array.from(ids).map(id => servers.value.get(id)!).filter(Boolean)
     })
     const compromisedServers = computed(() => {
-        const ids = serversByStatus.value.get(Status.Red) || new Set()
+        const ids = serversByStatus.value.get(StatusServer.Red) || new Set()
         return Array.from(ids).map(id => servers.value.get(id)!).filter(Boolean)
     })
     const unknownServers = computed(() => {
-        const ids = serversByStatus.value.get(Status.Yellow) || new Set()
+        const ids = serversByStatus.value.get(StatusServer.Yellow) || new Set()
         return Array.from(ids).map(id => servers.value.get(id)!).filter(Boolean)
     })
 
     // Zone status
-    const getZonesByStatus = (status: Status): Zone[] => {
+    const getZonesByStatus = (status: StatusServer): Zone[] => {
         return Array.from(zones.value.values()).filter(zone => getZoneHealth(zone.id) === status)
     }
 
-    const healthyZones = computed(() => getZonesByStatus(Status.Green))
-    const unknownZones = computed(() => getZonesByStatus(Status.Yellow))
-    const compromisedZones = computed(() => getZonesByStatus(Status.Red))
+    const healthyZones = computed(() => getZonesByStatus(StatusServer.Green))
+    const unknownZones = computed(() => getZonesByStatus(StatusServer.Yellow))
+    const compromisedZones = computed(() => getZonesByStatus(StatusServer.Red))
 
     const getZoneHealth = (zoneId: string): string => {
         // Check cache
@@ -229,8 +230,8 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
         // Calculate health
         const serverIds = serversByZone.value.get(zoneId) || new Set()
         if (serverIds.size === 0) {
-            zoneHealthCache.value.set(zoneId, Status.Green)
-            return Status.Green
+            zoneHealthCache.value.set(zoneId, StatusServer.Green)
+            return StatusServer.Green
         }
 
         let hasCompromised = false
@@ -239,12 +240,12 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
         for (const serverId of serverIds) {
             const server = servers.value.get(serverId)
             if (server) {
-                if (server.status === Status.Red) hasCompromised = true
-                if (server.status === Status.Yellow) hasUnknown = true
+                if (server.status === StatusServer.Red) hasCompromised = true
+                if (server.status === StatusServer.Yellow) hasUnknown = true
             }
         }
 
-        const health = hasCompromised ? Status.Red : hasUnknown ? Status.Yellow : Status.Green
+        const health = hasCompromised ? StatusServer.Red : hasUnknown ? StatusServer.Yellow : StatusServer.Green
         zoneHealthCache.value.set(zoneId, health)
         return health
     }
@@ -260,7 +261,7 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
 
         const updatedCapability = {
             ...capability,
-            status: update.status,
+            status: update.status as StatusCapability,
             lastUpdated: new Date(update.timestamp)
         }
         capabilities.value.set(update.id, updatedCapability)
@@ -278,7 +279,7 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
 
         const updatedServer = {
             ...server,
-            status: update.status,
+            status: update.status as StatusServer,
             lastUpdated: new Date(update.timestamp)
         }
         servers.value.set(update.id, updatedServer)

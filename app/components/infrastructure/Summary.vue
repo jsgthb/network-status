@@ -12,21 +12,21 @@
               variant="subtle" 
               size="lg"
             >
-              {{ store.healthyCapabilities.length }} Healthy
+              {{ store.healthyCapabilities.length }} {{ StatusCapability.Green }}
             </UBadge>
             <UBadge 
               :color="store.unknownCapabilities.length === 0 ? 'neutral' : 'warning'"
               variant="subtle" 
               size="lg"
             >
-              {{ store.unknownCapabilities.length }} Unknown
+              {{ store.unknownCapabilities.length }} {{ StatusCapability.Yellow }}
             </UBadge>
             <UBadge 
               :color="store.compromisedCapabilities.length === 0 ? 'neutral' : 'error'"
               variant="subtle" 
               size="lg"
             >
-              {{ store.compromisedCapabilities.length }} Compromised
+              {{ store.compromisedCapabilities.length }} {{ StatusCapability.Red }}
             </UBadge>
           </div>
       </UCard>
@@ -43,21 +43,21 @@
             variant="subtle" 
             size="lg"
           >
-            {{ store.healthyZones.length }} Healthy
+            {{ store.healthyZones.length }} {{ StatusServer.Green }}
           </UBadge>
           <UBadge 
             :color="store.unknownZones.length === 0 ? 'neutral' : 'warning'"
             variant="subtle" 
             size="lg"
           >
-            {{ store.unknownZones.length }} Unknown
+            {{ store.unknownZones.length }} {{ StatusServer.Yellow }}
           </UBadge>
           <UBadge 
             :color="store.compromisedZones.length === 0 ? 'neutral' : 'error'" 
             variant="subtle" 
             size="lg"
           >
-            {{ store.compromisedZones.length }} Compromised
+            {{ store.compromisedZones.length }} {{ StatusServer.Red }}
           </UBadge>
         </div>
       </UCard>
@@ -74,21 +74,21 @@
               variant="subtle" 
               size="lg"
             >
-              {{ store.healthyServers.length }} Healthy
+              {{ store.healthyServers.length }} {{ StatusServer.Green }}
             </UBadge>
             <UBadge 
               :color="store.unknownServers.length === 0 ? 'neutral' : 'warning'"
               variant="subtle" 
               size="lg"
             >
-              {{ store.unknownServers.length }} Unknown
+              {{ store.unknownServers.length }} {{ StatusServer.Yellow }}
             </UBadge>
             <UBadge 
               :color="store.compromisedServers.length === 0 ? 'neutral' : 'error'" 
               variant="subtle" 
               size="lg"
             >
-              {{ store.compromisedServers.length }} Compromised
+              {{ store.compromisedServers.length }} {{ StatusServer.Red }}
             </UBadge>
           </div>
       </UCard>
@@ -97,5 +97,9 @@
 
 <script setup lang="ts">
 import { useInfrastructureStore } from '#imports';
+import { StatusServer, StatusCapability} from "~/types/infrastructureTypes"
+
 const store = useInfrastructureStore()
+const serverStatusEnum = StatusServer
+const capabilityStatusEnum = StatusCapability
 </script>
