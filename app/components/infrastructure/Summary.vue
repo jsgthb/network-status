@@ -39,7 +39,7 @@
         </div>
         <div class="flex gap-2 justify-center flex-wrap sm:flex-nowrap">
           <UBadge 
-            :color="store.healthyZones.length !== 0 || store.healthyZones.length !== 0 ? 'neutral' : 'success'"
+            :color="store.unknownZones.length !== 0 || store.compromisedZones.length !== 0 ? 'neutral' : 'success'"
             variant="subtle" 
             size="lg"
           >
