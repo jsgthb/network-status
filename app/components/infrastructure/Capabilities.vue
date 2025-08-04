@@ -39,7 +39,7 @@
               <div
                 v-for="zone in store.getZonesByCapability(capability.id)"
                 :key="zone.id"
-                class="flex items-center justify-between p-2 bg-gray-700/35 rounded"
+                class="flex items-center justify-between p-2 border-gray-800 border rounded hover:scale-103 hover:bg-blue-900/25 transition-all duration-200"
               >
                 <div class="flex items-center gap-2">
                   <UBadge
