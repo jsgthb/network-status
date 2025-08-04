@@ -1,12 +1,7 @@
 <template>
     <UCard>
       <template #header>
-        <div class="flex items-center justify-between">
-          <h2 class="text-xl font-semibold">Zones</h2>
-          <div class="text-sm text-gray-600">
-            Showing computed health based on server status
-          </div>
-        </div>
+        <h2 class="text-xl font-semibold">Zones</h2>
       </template>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

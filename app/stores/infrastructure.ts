@@ -210,6 +210,16 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
         const ids = serversByStatus.value.get(Status.Yellow) || new Set()
         return Array.from(ids).map(id => servers.value.get(id)!).filter(Boolean)
     })
+
+    // Zone status
+    const getZonesByStatus = (status: Status): Zone[] => {
+        return Array.from(zones.value.values()).filter(zone => getZoneHealth(zone.id) === status)
+    }
+
+    const healthyZones = computed(() => getZonesByStatus(Status.Green))
+    const unknownZones = computed(() => getZonesByStatus(Status.Yellow))
+    const compromisedZones = computed(() => getZonesByStatus(Status.Red))
+
     const getZoneHealth = (zoneId: string): string => {
         // Check cache
         if (zoneHealthCache.value.has(zoneId)) {
@@ -331,6 +341,9 @@ export const useInfrastructureStore = defineStore("infrastructure", () => {
         healthyServers,
         compromisedServers,
         unknownServers,
+        healthyZones,
+        unknownZones,
+        compromisedZones,
 
         // Health calculation
         getZoneHealth,
