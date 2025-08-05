@@ -67,7 +67,7 @@
         <!-- TODO Add update functionality-->
         <div class="p-4">
           <UButton
-            @click=""
+            @click="openModal(capability.id)"
             size="sm"
             color="info"
             variant="outline"
@@ -79,13 +79,33 @@
         </div>
       </div>
     </div>
+
+    <CapabilityStatusModal
+      v-model="modalIsOpen"
+      :capability-id="selectedCapabilityId"
+      @submit="handleStatusUpdate"
+    />
 </template>
 
 <script setup lang="ts">
 import { useInfrastructureStore } from '#imports';
 import { StatusCapability, StatusServer } from '~/types/infrastructureTypes';
+import CapabilityStatusModal from './CapabilityStatusModal.vue';
 
 const store = useInfrastructureStore()
+const modalIsOpen = ref(false)
+const selectedCapabilityId = ref<string>("")
+
+function openModal(capabilityId: string) {
+  selectedCapabilityId.value = capabilityId
+  modalIsOpen.value = true
+}
+
+// TODO Use StatusUpdate type after adding note to type
+function handleStatusUpdate(data: { capabilityId: string, status: StatusCapability, note: string }) {
+  updateCapabilityStatus(data.capabilityId, data.status)
+  console.log("Capability status update: ", data)
+}
 
 const getStatusColor = (status: string) => {
   switch (status) {
